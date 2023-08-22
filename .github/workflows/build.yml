@@ -68,17 +68,39 @@ jobs:
         with:
           name: windows_exporter_binaries
           path: |
-            dist/nvidia_gpu_exporter_windows_amd64_v1/
-            dist/nvidia_gpu_exporter_windows_386/
+            dist/nvidia_gpu_exporter_windows_*/
   msi:
     needs: build
     runs-on: windows-2022
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3.5.3
+
+      - name: Setup Go
+        uses: actions/setup-go@v4.1.0
+        with:
+          go-version-file: go.mod
+
       - name: Download Windows Artifacts
         uses: actions/download-artifact@v3
         with:
           name: windows_exporter_binaries
+
       - name: Display structure of downloaded files
         run: ls -R
 
+      - name: Build Release Artifacts
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          $ErrorActionPreference = "Stop"
+          $TagName = $env:GITHUB_REF -replace 'refs/tags/', ''
+          # The MSI version is not semver compliant, so just take the numerical parts
+          $MSIVersion = $TagName -replace '^v?([0-9\.]+).*$','$1'
+          foreach($Arch in "amd64_v1", "386") {
+            Write-Verbose "Building windows_exporter $MSIVersion msi for $Arch"
+            .\installer\build.ps1 -PathToExecutable .\nvidia_gpu_exporter\nvidia_gpu_exporter_windows_$Arch/nvidia_gpu_exporter.exe -Version $MSIVersion -Arch "$Arch"
+            Move-Item installer\Output\windows_exporter-$MSIVersion-$Arch.msi output\
+          }
+        env:
+          PRIVATE_ACCESS_TOKEN: placeholder
 

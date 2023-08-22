@@ -63,3 +63,18 @@ jobs:
           args: release --snapshot --skip-publish --clean
         env:
           PRIVATE_ACCESS_TOKEN: placeholder
+      - name: Upload Windows Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: windows_exporter_binaries
+          path: dist\nvidia_gpu_exporter_windows_*\nvidia_gpu_exporter.exe
+  msi:
+    needs: build
+    runs-on: windows-2022
+    steps:
+      - name: Download Windows Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: windows_exporter_binaries
+      - name: Display structure of downloaded files
+        run: ls -R

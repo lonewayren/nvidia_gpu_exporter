@@ -67,7 +67,9 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: windows_exporter_binaries
-          path: dist\nvidia_gpu_exporter_windows_*\nvidia_gpu_exporter.exe
+          path: |
+            dist/nvidia_gpu_exporter_windows_amd64_v1/
+            dist/nvidia_gpu_exporter_windows_386/
   msi:
     needs: build
     runs-on: windows-2022

@@ -8,8 +8,6 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	// Its important that we do these first so that we can register with the windows service control ASAP to avoid timeouts
-	"github.com/utkuozdemir/nvidia_gpu_exporter/internal/initiate"
 
 	"github.com/alecthomas/kingpin/v2"
 	"github.com/coreos/go-systemd/v22/activation"
@@ -24,6 +22,7 @@ import (
 	webflag "github.com/prometheus/exporter-toolkit/web/kingpinflag"
 
 	"github.com/utkuozdemir/nvidia_gpu_exporter/internal/exporter"
+	"github.com/utkuozdemir/nvidia_gpu_exporter/internal/initiate"
 )
 
 const (

@@ -99,8 +99,10 @@ jobs:
           foreach($Arch in "amd64_v1", "386") {
             Write-Verbose "Building windows_exporter $MSIVersion msi for $Arch"
             .\installer\build.ps1 -PathToExecutable .\nvidia_gpu_exporter\nvidia_gpu_exporter_windows_$Arch/nvidia_gpu_exporter.exe -Version $MSIVersion -Arch "$Arch"
-            Move-Item installer\Output\windows_exporter-$MSIVersion-$Arch.msi output\
+            Move-Item installer\Output\nvidia_gpu_exporter_$MSIVersion_$Arch.msi dist\
           }
-        env:
-          PRIVATE_ACCESS_TOKEN: placeholder
-
+      - name: Upload Windows Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: windows_exporter_binaries
+          path: dist
